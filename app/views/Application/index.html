@@ -1,0 +1,11 @@
+#{extends 'main.html' /}
+#{set title:'Home' /}
+
+<script>
+    var _article = ${article.raw()};
+</script>
+
+<input type="text" id="permalink" disabled/><br/>
+<input type="text" id="title"/><br/>
+<textarea id="body"></textarea></br>
+<!--input type="button" id="save-button" value="SAVE"/-->
