@@ -9,11 +9,17 @@ TitleBox = Class.extend({
         this.registerEvents();
     },
 
+    setValue: function(value) {
+        $(this.element).val(value);
+    },
+
     getValue: function() {
         return $(this.element).val();
     },
 
     registerEvents: function() {
-
+        this.element.click(function() {
+            this.select();
+        })
     }
 });

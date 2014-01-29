@@ -1,34 +1,64 @@
-body {
+body, html {
     font-family: verdana, arial, helvetica;
-}
-
-.auto-complete {
-    font-size: 0.6em;
-    position: absolute;
-    width: 200px;
-    border: 1px solid black;
-    background-color: #f5deb3;
-    list-style: none;
+    font-size: 12px;
+    padding: 0;
     margin: 0;
-    padding: 0px;
-    top: 49px;
-    left: 10px;
+    width: 100%;
+    height: 100%;
 }
 
-.auto-complete li {
-    padding: 5px;
-    border-bottom: 1px solid black;
-    width: 190px;
-    margin: 0px;
-    cursor: pointer;
+#permalink {
+    width: 200px;
 }
 
-.auto-complete li:hover {
-    background-color: white;
+
+.wrapper {
+    display: table;
+    width: 100%;
+    height: 100%;
+    /*border: 1px solid black;*/
 }
 
-.auto-complete li:last-child {
-    border: none;
+.wrapper > div {
+    display: table-row;
+}
+
+.wrapper > div > div,
+.wrapper > div > form {
+    display: table-cell;
+}
+
+.top {
+    height: 100px;
+}
+
+.inner {
+}
+
+#content-area {
+    position: relative; /* allows for textcontent to be absolutely positioned within this */
+}
+
+.dropzone {
+    display: none;
+    /*position: absolute;
+    width: 300px;
+    height: 300px;
+    top: 50%;
+    margin-top: -150px;
+    right: 50px;*/
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-color: #efefef;
+    /*opacity: 0.8;*/
+}
+
+#textcontent {
+    font-size: 1.3em;
+    position: absolute;
+    height: 100%;
+    width: 100%;
 }
 
 .hidden {

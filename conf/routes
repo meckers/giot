@@ -10,11 +10,14 @@ GET     /                                       Application.index
 GET     /store/load/{id}                        Store.load
 POST    /store/save                             Store.save
 
+# Upload
+POST    /file/upload                            Upload.upload
+
 # Analysis
 POST    /analysis/suggest                       Analysis.suggest
 
 # Wikipedia
-POST    /wikipedia/search                       Wikipedia.search
+POST    /wikipedia/search
 
 # Ignore favicon requests
 GET     /favicon.ico                            404

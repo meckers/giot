@@ -4,35 +4,59 @@ Editor = Class.extend({
     titleBox: null,
     titleAtLastSave: "",
     bodyAtLastSave: "",
+    element: null,
 
-    init: function(article) {
+    init: function(options) {
+
+        //this.article = options.article;
+        this.article = new Article(options.article);
+        this.element = $(options.element);
         this.titleBox = new TitleBox();
-        if (article) {
-            this.article = article;
+
+        if (this.article.isFromPageLoad) {
             this.populate();
         }
         this.registerEvents();
+
+        console.log("element", this.element);
     },
 
     registerEvents: function() {
         var me = this;
-        $("#body").on('change keyup paste', function() {
-            me.startEdit();
+        this.element.on('change keyup paste', function() {
+            me.onBodyChange();
         });
+
+        this.element.on('dragover', function() {
+            me.showDropZone();
+        });
+
+        /*
+        this.element.on('dragleave', function() {
+            me.hideDropZone();
+        });*/
+    },
+
+    showDropZone:function() {
+        $(".dropzone").css('display', 'block');
+    },
+
+    hideDropZone: function() {
+        $(".dropzone").css('display', 'none');
     },
 
     populate: function() {
         if (this.article) {
             //$("#title").val(this.article.title);
             this.titleBox.setValue(this.article.title);
-            $("#body").val(this.article.body);
-            this.updatePermaLink(this.article._id);
+            this.element.html(this.article.body);
+            this.updatePermaLink(this.article.id);
         }
     },
 
 
     bodyValue: function() {
-        return $("#body").val();
+        return this.element.html();
     },
 
     hasChanged: function() {
@@ -50,24 +74,29 @@ Editor = Class.extend({
         $("#permalink").val("http://localhost:9589/" + id);
     },
 
-    startEdit: function() {
-        console.log("startEdit");
-        if (!this.editing) {
-            this.editing = true;
+    onBodyChange: function() {
+        //if (!this.editing) {
+            console.log("startEdit");
+          //  this.editing = true;
             var me = this;
-            window.setInterval(function() {
+        if (this.saveTimeout) {
+            window.clearTimeout(this.saveTimeout);
+        }
+
+            this.saveTimeout = window.setInterval(function() {
                 me.saveArticle();
-            }, 5000);
+            }, 1000);
             /*
             window.setTimeout(function() {
                 me.getSuggestions();
             }, 6000); */
-        }
+        //}
     },
 
     saveSuccess: function(result) {
-        console.log("saveSuccess", result, this.updatePermaLink);
-        this.id = result.id;
+        console.log("saveSuccess", result);
+        //this.id = result.id;
+        this.article.id = result.id;
         this.updatePermaLink(result.id);
         this.updateLastSavedValues();
     },
@@ -76,7 +105,7 @@ Editor = Class.extend({
 
         if (this.hasChanged()) {
             var title = $("#title").val();
-            var body = $("#body").val();
+            var body = this.element.html();
             var saveUrl = "/store/save";
             var me = this;
 
@@ -85,9 +114,11 @@ Editor = Class.extend({
                 thebody: body
             }
 
-            if (this.id) {
-                data.id = this.id;
+            if (this.article.id) {
+                data.id = this.article.id;
             }
+
+            console.log("posting to save:", data);
 
             $.post(saveUrl, data, function(result) {
                 me.saveSuccess(result);

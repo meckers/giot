@@ -2,10 +2,30 @@
 #{set title:'Home' /}
 
 <script>
-    var _article = ${article.raw()};
+    #{if article != null}
+        var _article = ${article.raw()};
+    #{/if}
+    #{else}
+        var _article = null;
+    #{/else}
 </script>
 
-<input type="text" id="permalink" disabled/><br/>
-<input type="text" id="title"/><br/>
-<textarea id="body"></textarea></br>
-<!--input type="button" id="save-button" value="SAVE"/-->
+<div class="wrapper">
+    <div class="top">
+        <div class="inner">
+            <input type="text" id="permalink" disabled/>
+            <input type="text" id="title" value="Click here to enter title!"/>
+        </div>
+    </div>
+    <div class="rest">
+        <div id="content-area">
+            <!--textarea id="body"></textarea-->
+            <div class="inner">
+                <div id="textcontent" contenteditable="true"><p></p></div>
+                <form action="/file/upload"
+                      class="dropzone"
+                      id="my-awesome-dropzone"></form>
+            </div>
+        </div>
+    </div>
+</div>
