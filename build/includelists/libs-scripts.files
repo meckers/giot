@@ -4,3 +4,4 @@ libs/jquery-ui-1.10.4.custom.min.js
 libs/rangy.js
 libs/hallo.js
 libs/dropzone.js
+libs/events.js

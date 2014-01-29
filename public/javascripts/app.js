@@ -3,7 +3,7 @@ var _editor = null;
 $(function() {
     _editor = new Editor({
         article: _article,
-        element: $("#textcontent")
+        element: $("#wrapper")
     });
     $("#textcontent").hallo({
         plugins: {

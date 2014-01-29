@@ -1,6 +1,7 @@
 app.js
 auto-complete.js
 editor.js
-title-box.js
+title.js
+body.js
 article.js
 

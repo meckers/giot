@@ -1,40 +1,33 @@
 Editor = Class.extend({
 
     editing: false,
-    titleBox: null,
+    title: null,
     titleAtLastSave: "",
     bodyAtLastSave: "",
     element: null,
 
     init: function(options) {
-
-        //this.article = options.article;
         this.article = new Article(options.article);
         this.element = $(options.element);
-        this.titleBox = new TitleBox();
+        this.title = new Title("#title");
+        this.body = new Body("#textcontent");
 
         if (this.article.isFromPageLoad) {
             this.populate();
         }
-        this.registerEvents();
 
-        console.log("element", this.element);
+        this.registerEvents();
     },
 
     registerEvents: function() {
         var me = this;
-        this.element.on('change keyup paste', function() {
-            me.onBodyChange();
-        });
+
+        Events.register("TITLE_CHANGED", this, this.onTitleChange);
+        Events.register("BODY_CHANGED", this, this.onBodyChange);
 
         this.element.on('dragover', function() {
             me.showDropZone();
         });
-
-        /*
-        this.element.on('dragleave', function() {
-            me.hideDropZone();
-        });*/
     },
 
     showDropZone:function() {
@@ -47,55 +40,51 @@ Editor = Class.extend({
 
     populate: function() {
         if (this.article) {
-            //$("#title").val(this.article.title);
-            this.titleBox.setValue(this.article.title);
-            this.element.html(this.article.body);
+            this.title.setValue(this.article.title);
+            this.body.setValue(this.article.body);
             this.updatePermaLink(this.article.id);
         }
     },
 
-
-    bodyValue: function() {
-        return this.element.html();
-    },
-
     hasChanged: function() {
-        return this.titleAtLastSave !== this.titleBox.getValue() || this.bodyAtLastSave !== this.bodyValue();
+        return this.titleAtLastSave !== this.title.getValue() || this.bodyAtLastSave !== this.body.getValue();
     },
-
 
     // TODO: Testa om det är/känns smidigare med att monitorera eventen 'change keyup paste' för förändringar.
     updateLastSavedValues: function() {
-        this.titleAtLastSave = this.titleBox.getValue();
-        this.bodyAtLastSave = this.bodyValue();
+        this.titleAtLastSave = this.title.getValue();
+        this.bodyAtLastSave = this.body.getValue();
     },
 
     updatePermaLink: function(id) {
         $("#permalink").val("http://localhost:9589/" + id);
     },
 
-    onBodyChange: function() {
-        //if (!this.editing) {
-            console.log("startEdit");
-          //  this.editing = true;
-            var me = this;
+    onTitleChange: function(value) {
+        this.onArticleChange();
+    },
+
+    onBodyChange: function(value) {
+        this.onArticleChange();
+    },
+
+    onArticleChange: function() {
+        console.log("article changed - resetting timeout to save");
+        var me = this;
         if (this.saveTimeout) {
             window.clearTimeout(this.saveTimeout);
         }
-
-            this.saveTimeout = window.setInterval(function() {
-                me.saveArticle();
-            }, 1000);
-            /*
-            window.setTimeout(function() {
-                me.getSuggestions();
-            }, 6000); */
-        //}
+        this.saveTimeout = window.setInterval(function() {
+            me.saveArticle();
+        }, 1000);
+        /*
+         window.setTimeout(function() {
+         me.getSuggestions();
+         }, 6000); */
     },
 
     saveSuccess: function(result) {
         console.log("saveSuccess", result);
-        //this.id = result.id;
         this.article.id = result.id;
         this.updatePermaLink(result.id);
         this.updateLastSavedValues();
@@ -104,8 +93,8 @@ Editor = Class.extend({
     saveArticle: function() {
 
         if (this.hasChanged()) {
-            var title = $("#title").val();
-            var body = this.element.html();
+            var title = this.title.getValue();
+            var body = this.body.getValue();
             var saveUrl = "/store/save";
             var me = this;
 

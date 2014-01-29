@@ -1,10 +1,10 @@
-TitleBox = Class.extend({
+Title = Class.extend({
 
     autoComplete: null,
     element: null,
 
     init: function(element) {
-        this.element = element || $("#title");
+        this.element = $(element) || $("#title");
         //this.autoComplete = new AutoComplete(this.element, "/wikipedia/search");
         this.registerEvents();
     },
@@ -18,6 +18,10 @@ TitleBox = Class.extend({
     },
 
     registerEvents: function() {
+        var me = this;
+        this.element.on('change keyup paste', function() {
+            Events.trigger("TITLE_CHANGED", me.getValue());
+        })
         this.element.click(function() {
             this.select();
         })
